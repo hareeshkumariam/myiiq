@@ -1,0 +1,636 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE Application PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Application connector="sailpoint.connector.webservices.WebServicesConnector" featuresString="PROVISIONING, ENABLE, PASSWORD, AUTHENTICATE, UNLOCK" name="testAdminApi" profileClass="" type="Web Services">
+  <Attributes>
+    <Map>
+      <entry key="accesstoken" value="4:ACP:kwnMDXeXvjqBZM1isUvm8v4NMwyrahB0jak8DNIMzg7VnkMUQhE1aNApppq8RPqc"/>
+      <entry key="afterProvisioningRule"/>
+      <entry key="authenticationMethod" value="OAuthLogin"/>
+      <entry key="beforeProvisioningRule"/>
+      <entry key="clientCertAuthEnabled">
+        <value>
+          <Boolean></Boolean>
+        </value>
+      </entry>
+      <entry key="compositeDefinition"/>
+      <entry key="connectionParameters">
+        <value>
+          <List>
+            <Map>
+              <entry key="afterRule"/>
+              <entry key="beforeRule"/>
+              <entry key="body">
+                <value>
+                  <Map>
+                    <entry key="bodyFormData"/>
+                    <entry key="bodyFormat" value="raw"/>
+                    <entry key="jsonBody"/>
+                  </Map>
+                </value>
+              </entry>
+              <entry key="contextUrl" value="/cloudapi/restapi/v3/user"/>
+              <entry key="curlCommand"/>
+              <entry key="curlEnabled">
+                <value>
+                  <Boolean></Boolean>
+                </value>
+              </entry>
+              <entry key="customAuthUrl"/>
+              <entry key="header"/>
+              <entry key="httpMethodType" value="GET"/>
+              <entry key="operationType" value="Test Connection"/>
+              <entry key="paginationSteps"/>
+              <entry key="pagingInitialOffset">
+                <value>
+                  <Integer>0</Integer>
+                </value>
+              </entry>
+              <entry key="pagingSize">
+                <value>
+                  <Integer>50</Integer>
+                </value>
+              </entry>
+              <entry key="parentEndpointName"/>
+              <entry key="resMappingObj"/>
+              <entry key="rootPath"/>
+              <entry key="sequenceNumberForEndpoint" value="1"/>
+              <entry key="uniqueNameForEndPoint" value="Test Connection"/>
+              <entry key="xpathNamespaces"/>
+            </Map>
+            <Map>
+              <entry key="afterRule"/>
+              <entry key="beforeRule"/>
+              <entry key="body">
+                <value>
+                  <Map>
+                    <entry key="bodyFormData"/>
+                    <entry key="bodyFormat" value="raw"/>
+                    <entry key="jsonBody"/>
+                  </Map>
+                </value>
+              </entry>
+              <entry key="contextUrl" value="/cloudapi/restapi/v3/user"/>
+              <entry key="curlCommand"/>
+              <entry key="curlEnabled">
+                <value>
+                  <Boolean></Boolean>
+                </value>
+              </entry>
+              <entry key="customAuthUrl"/>
+              <entry key="header"/>
+              <entry key="httpMethodType" value="GET"/>
+              <entry key="operationType" value="Account Aggregation"/>
+              <entry key="paginationSteps"/>
+              <entry key="pagingInitialOffset">
+                <value>
+                  <Integer>0</Integer>
+                </value>
+              </entry>
+              <entry key="pagingSize">
+                <value>
+                  <Integer>50</Integer>
+                </value>
+              </entry>
+              <entry key="parentEndpointName"/>
+              <entry key="resMappingObj">
+                <value>
+                  <Map>
+                    <entry key="accountId" value="id"/>
+                    <entry key="disabled" value="disabled"/>
+                    <entry key="emailAddress" value="emailAddress"/>
+                    <entry key="firstName" value="firstName"/>
+                    <entry key="lastName" value="lastName"/>
+                    <entry key="locked" value="locked"/>
+                    <entry key="loginId" value="loginId"/>
+                    <entry key="organizationId" value="organization.id"/>
+                    <entry key="organizationName" value="organization.name"/>
+                    <entry key="roles" value="roles[*].name"/>
+                    <entry key="status" value="status"/>
+                    <entry key="userType" value="userType"/>
+                  </Map>
+                </value>
+              </entry>
+              <entry key="responseCode">
+                <value>
+                  <List>
+                    <String>2**</String>
+                  </List>
+                </value>
+              </entry>
+              <entry key="rootPath" value="$[*]"/>
+              <entry key="sequenceNumberForEndpoint" value="2"/>
+              <entry key="uniqueNameForEndPoint" value="Account Aggreation"/>
+              <entry key="xpathNamespaces"/>
+            </Map>
+            <Map>
+              <entry key="afterRule"/>
+              <entry key="beforeRule"/>
+              <entry key="body">
+                <value>
+                  <Map>
+                    <entry key="bodyFormData"/>
+                    <entry key="bodyFormat" value="raw"/>
+                    <entry key="jsonBody" value="{&#xD;&#xA;  &quot;added&quot;: [&#xD;&#xA;    {&#xD;&#xA;      &quot;roles&quot;: [&#xD;&#xA;        {&#xD;&#xA;          &quot;id&quot;: &quot;d751a011164a4b25a38204b228e09e9a&quot;,&#xD;&#xA;          &quot;displayName&quot;: &quot;Primavera Unifier Stage&quot;,&#xD;&#xA;          &quot;name&quot;: &quot;PrimaveraUnifierStage&quot;&#xD;&#xA;        },&#xD;&#xA;        {&#xD;&#xA;          &quot;id&quot;: &quot;dfeac3a8e86a42149188856ad771f7c2&quot;,&#xD;&#xA;          &quot;displayName&quot;: &quot;BI Production Consumers&quot;,&#xD;&#xA;          &quot;name&quot;: &quot;BIProductionConsumers&quot;&#xD;&#xA;        }&#xD;&#xA;      ],&#xD;&#xA;      &quot;lastName&quot;: &quot;$plan.lastName$&quot;,&#xD;&#xA;      &quot;firstName&quot;: &quot;$plan.firstName$&quot;,&#xD;&#xA;      &quot;emailAddress&quot;: &quot;$plan.emailAddress$&quot;,&#xD;&#xA;      &quot;loginId&quot;: &quot;$plan.loginId$&quot;,&#xD;&#xA;      &quot;organization&quot;: {&#xD;&#xA;        &quot;name&quot;: &quot;$plan.organization$&quot;&#xD;&#xA;      }&#xD;&#xA;    }&#xD;&#xA;  ],&#xD;&#xA;  &quot;modified&quot;: [],&#xD;&#xA;  &quot;deleted&quot;: []&#xD;&#xA;}"/>
+                  </Map>
+                </value>
+              </entry>
+              <entry key="contextUrl" value="/cloudapi/restapi/v3/user"/>
+              <entry key="curlCommand"/>
+              <entry key="curlEnabled">
+                <value>
+                  <Boolean></Boolean>
+                </value>
+              </entry>
+              <entry key="customAuthUrl"/>
+              <entry key="header"/>
+              <entry key="httpMethodType" value="POST"/>
+              <entry key="operationType" value="Create Account"/>
+              <entry key="paginationSteps"/>
+              <entry key="pagingInitialOffset">
+                <value>
+                  <Integer>0</Integer>
+                </value>
+              </entry>
+              <entry key="pagingSize">
+                <value>
+                  <Integer>50</Integer>
+                </value>
+              </entry>
+              <entry key="parentEndpointName"/>
+              <entry key="resMappingObj"/>
+              <entry key="rootPath"/>
+              <entry key="sequenceNumberForEndpoint" value="3"/>
+              <entry key="uniqueNameForEndPoint" value="Create Account"/>
+              <entry key="xpathNamespaces"/>
+            </Map>
+            <Map>
+              <entry key="afterRule"/>
+              <entry key="beforeRule"/>
+              <entry key="body">
+                <value>
+                  <Map>
+                    <entry key="bodyFormData"/>
+                    <entry key="bodyFormat" value="raw"/>
+                    <entry key="jsonBody" value="{&#xD;&#xA;  &quot;added&quot;: [],&#xD;&#xA;  &quot;modified&quot;: [&#xD;&#xA;    {&#xD;&#xA;      &quot;roles&quot;: [&#xD;&#xA;        {&#xD;&#xA;          &quot;id&quot;: &quot;d751a011164a4b25a38204b228e09e9a&quot;,&#xD;&#xA;          &quot;displayName&quot;: &quot;Primavera Unifier Stage&quot;,&#xD;&#xA;          &quot;name&quot;: &quot;PrimaveraUnifierStage&quot;&#xD;&#xA;        }&#xD;&#xA;      ],&#xD;&#xA;      &quot;lastName&quot;: &quot;$plan.lastName$&quot;,&#xD;&#xA;      &quot;firstName&quot;: &quot;$plan.firstName$&quot;,&#xD;&#xA;      &quot;emailAddress&quot;: &quot;$plan.emailAddress$&quot;,&#xD;&#xA;      &quot;loginId&quot;: &quot;$plan.loginId$&quot;,&#xD;&#xA;      &quot;organization&quot;: {&#xD;&#xA;        &quot;name&quot;: &quot;$plan.organization$&quot;&#xD;&#xA;      },&#xD;&#xA;      &quot;id&quot;: &quot;$plan.accountId$&quot;&#x9;&#xD;&#xA;    }&#xD;&#xA;  ],&#xD;&#xA;  &quot;deleted&quot;: []&#xD;&#xA;}&#xD;&#xA;"/>
+                  </Map>
+                </value>
+              </entry>
+              <entry key="contextUrl" value="/cloudapi/restapi/v3/user"/>
+              <entry key="curlCommand"/>
+              <entry key="curlEnabled">
+                <value>
+                  <Boolean></Boolean>
+                </value>
+              </entry>
+              <entry key="customAuthUrl"/>
+              <entry key="header"/>
+              <entry key="httpMethodType" value="POST"/>
+              <entry key="operationType" value="Update Account"/>
+              <entry key="paginationSteps"/>
+              <entry key="pagingInitialOffset">
+                <value>
+                  <Integer>0</Integer>
+                </value>
+              </entry>
+              <entry key="pagingSize">
+                <value>
+                  <Integer>50</Integer>
+                </value>
+              </entry>
+              <entry key="parentEndpointName"/>
+              <entry key="resMappingObj"/>
+              <entry key="rootPath"/>
+              <entry key="sequenceNumberForEndpoint" value="4"/>
+              <entry key="uniqueNameForEndPoint" value="Update Account"/>
+              <entry key="xpathNamespaces"/>
+            </Map>
+            <Map>
+              <entry key="afterRule"/>
+              <entry key="beforeRule"/>
+              <entry key="body">
+                <value>
+                  <Map>
+                    <entry key="bodyFormData"/>
+                    <entry key="bodyFormat" value="raw"/>
+                    <entry key="jsonBody" value="[&#xD;&#xA;  {&#xD;&#xA;    &quot;id&quot;: &quot;$plan.accountId$&quot;,&#xD;&#xA;    &quot;loginId&quot;: &quot;$plan.userName$&quot;,&#xD;&#xA;    &quot;disabled&quot;: false&#xD;&#xA;  }&#xD;&#xA;]&#xD;&#xA;"/>
+                  </Map>
+                </value>
+              </entry>
+              <entry key="contextUrl" value="/cloudapi/restapi/v3/user/change-status"/>
+              <entry key="curlCommand"/>
+              <entry key="curlEnabled">
+                <value>
+                  <Boolean></Boolean>
+                </value>
+              </entry>
+              <entry key="customAuthUrl"/>
+              <entry key="header"/>
+              <entry key="httpMethodType" value="PUT"/>
+              <entry key="operationType" value="Enable Account"/>
+              <entry key="paginationSteps"/>
+              <entry key="pagingInitialOffset">
+                <value>
+                  <Integer>0</Integer>
+                </value>
+              </entry>
+              <entry key="pagingSize">
+                <value>
+                  <Integer>50</Integer>
+                </value>
+              </entry>
+              <entry key="parentEndpointName"/>
+              <entry key="resMappingObj"/>
+              <entry key="rootPath"/>
+              <entry key="sequenceNumberForEndpoint" value="5"/>
+              <entry key="uniqueNameForEndPoint" value="Enable Account"/>
+              <entry key="xpathNamespaces"/>
+            </Map>
+            <Map>
+              <entry key="afterRule"/>
+              <entry key="beforeRule"/>
+              <entry key="body">
+                <value>
+                  <Map>
+                    <entry key="bodyFormData"/>
+                    <entry key="bodyFormat" value="raw"/>
+                    <entry key="jsonBody" value="[&#xD;&#xA;  {&#xD;&#xA;    &quot;id&quot;: &quot;$plan.accountId$&quot;,&#xD;&#xA;    &quot;loginId&quot;: &quot;$plan.userName$&quot;,&#xD;&#xA;    &quot;disabled&quot;: true&#xD;&#xA;  }&#xD;&#xA;]&#xD;&#xA;"/>
+                  </Map>
+                </value>
+              </entry>
+              <entry key="contextUrl" value="/cloudapi/restapi/v3/user/change-status"/>
+              <entry key="curlCommand"/>
+              <entry key="curlEnabled">
+                <value>
+                  <Boolean></Boolean>
+                </value>
+              </entry>
+              <entry key="customAuthUrl"/>
+              <entry key="header"/>
+              <entry key="httpMethodType" value="PUT"/>
+              <entry key="operationType" value="Disable Account"/>
+              <entry key="paginationSteps"/>
+              <entry key="pagingInitialOffset">
+                <value>
+                  <Integer>0</Integer>
+                </value>
+              </entry>
+              <entry key="pagingSize">
+                <value>
+                  <Integer>50</Integer>
+                </value>
+              </entry>
+              <entry key="parentEndpointName"/>
+              <entry key="resMappingObj"/>
+              <entry key="rootPath"/>
+              <entry key="sequenceNumberForEndpoint" value="6"/>
+              <entry key="uniqueNameForEndPoint" value="Disable Account"/>
+              <entry key="xpathNamespaces"/>
+            </Map>
+          </List>
+        </value>
+      </entry>
+      <entry key="createAccountWithEntReq">
+        <value>
+          <Boolean></Boolean>
+        </value>
+      </entry>
+      <entry key="enableHasMore" value="true"/>
+      <entry key="enableStatus"/>
+      <entry key="encrypted" value="accesstoken,refresh_token,oauth_token_info,client_secret,private_key,private_key_password,clientCertificate,clientKeySpec,resourceOwnerPassword,custom_auth_token_info"/>
+      <entry key="fixedPlanMultivaluedAttribute" value="true"/>
+      <entry key="genericWebServiceBaseUrl" value="https://us2.unifier.oraclecloud.com/pgecorp"/>
+      <entry key="httpCookieSpecsStandard" value="true"/>
+      <entry key="isGetObjectRequiredForPTA">
+        <value>
+          <Boolean>true</Boolean>
+        </value>
+      </entry>
+      <entry key="nativeChangeDetectionAttributeScope" value="entitlements"/>
+      <entry key="nativeChangeDetectionAttributes"/>
+      <entry key="nativeChangeDetectionEnabled">
+        <value>
+          <Boolean></Boolean>
+        </value>
+      </entry>
+      <entry key="nativeChangeDetectionOperations"/>
+      <entry key="oAuthJwtHeader">
+        <value>
+          <Map>
+            <entry key="alg" value="RS256"/>
+          </Map>
+        </value>
+      </entry>
+      <entry key="oAuthJwtPayload">
+        <value>
+          <Map>
+            <entry key="aud"/>
+            <entry key="exp" value="15f"/>
+            <entry key="iss"/>
+            <entry key="sub"/>
+          </Map>
+        </value>
+      </entry>
+      <entry key="private_key_to_update"/>
+      <entry key="saml_assertion_url"/>
+      <entry key="saml_request_body"/>
+      <entry key="sysDescriptions">
+        <value>
+          <Map>
+            <entry key="en_US"/>
+          </Map>
+        </value>
+      </entry>
+      <entry key="templateApplication" value="Web Services"/>
+      <entry key="throwProvAfterRuleException">
+        <value>
+          <Boolean>true</Boolean>
+        </value>
+      </entry>
+      <entry key="throwProvBeforeRuleException">
+        <value>
+          <Boolean>true</Boolean>
+        </value>
+      </entry>
+      <entry key="timeoutInSeconds"/>
+      <entry key="uarApp">
+        <value>
+          <Boolean></Boolean>
+        </value>
+      </entry>
+      <entry key="version" value="v2"/>
+    </Map>
+  </Attributes>
+  <CustomizationRule>
+    <Reference class="sailpoint.object.Rule" name="testCustomization"/>
+  </CustomizationRule>
+  <Owner>
+    <Reference class="sailpoint.object.Identity" name="spadmin"/>
+  </Owner>
+  <ProvisioningForms>
+    <Form name="testAdminCreateForm" objectType="account" type="Create">
+      <Attributes>
+        <Map>
+          <entry key="pageTitle" value="testAdminCreateForm"/>
+        </Map>
+      </Attributes>
+      <Description>testAdminCreateForm</Description>
+      <Section name="Section 1">
+        <Field displayName="First Name" name="firstName" type="string">
+          <Script>
+            <Source>return identity.getFirstname();</Source>
+          </Script>
+        </Field>
+        <Field displayName="Last Name" name="lastName" type="string">
+          <Script>
+            <Source>return identity.getLastname();</Source>
+          </Script>
+        </Field>
+        <Field displayName="Email" name="emailAddress" type="string">
+          <Script>
+            <Source>return identity.getEmail();</Source>
+          </Script>
+        </Field>
+        <Field displayName="Company Name" name="organization" type="string">
+          <Script>
+            <Source>return identity.getAttribute("companyName");</Source>
+          </Script>
+        </Field>
+        <Field displayName="Login ID" name="loginId" type="string">
+          <Script>
+            <Source>return identity.getName();</Source>
+          </Script>
+        </Field>
+      </Section>
+    </Form>
+    <Form name="testAdminUpdateForm" objectType="account" type="Update">
+      <Attributes>
+        <Map>
+          <entry key="pageTitle" value="testAdminUpdateForm"/>
+        </Map>
+      </Attributes>
+      <Description>testAdminUpdateForm</Description>
+      <Section name="Section 1">
+        <Field displayName="First Name" name="firstName" type="string">
+          <Script>
+            <Source>return identity.getFirstname();</Source>
+          </Script>
+        </Field>
+        <Field displayName="Last Name" name="lastName" type="string">
+          <Script>
+            <Source>return identity.getLastname();</Source>
+          </Script>
+        </Field>
+        <Field displayName="Email" name="emailAddress" type="string">
+          <Script>
+            <Source>return identity.getEmail();</Source>
+          </Script>
+        </Field>
+        <Field displayName="Company Name" name="organization" type="string">
+          <Script>
+            <Source>return identity.getAttribute("companyName");</Source>
+          </Script>
+        </Field>
+        <Field displayName="Account ID" name="accountId" type="string">
+          <Script>
+            <Source>import sailpoint.object.Application;
+              import sailpoint.object.Identity;
+              import sailpoint.object.Link;
+
+              Application app = context.getObjectByName(Application.class, "");
+
+              Link link = identity.getLink(app);
+              String accountId = null;
+              if(link != null){
+              accountId = (String) link.getAttribute("");
+              }
+
+              return accountId ;</Source>
+          </Script>
+        </Field>
+        <Field displayName="Login ID" name="loginId" type="string">
+          <Script>
+            <Source>return identity.getName();</Source>
+          </Script>
+        </Field>
+      </Section>
+    </Form>
+    <Form name="testAdminEnableForm" objectType="account" type="Enable">
+      <Attributes>
+        <Map>
+          <entry key="pageTitle" value="testAdminEnableForm"/>
+        </Map>
+      </Attributes>
+      <Description>testAdminEnableForm</Description>
+      <Section name="Section 1">
+        <Field displayName="Account ID" name="accountId" type="string">
+          <Script>
+            <Source>import sailpoint.object.Application;
+              import sailpoint.object.Identity;
+              import sailpoint.object.Link;
+
+              Application app = context.getObjectByName(Application.class, "");
+
+              Link link = identity.getLink(app);
+              String accountId = null;
+              if(link != null){
+              accountId = (String) link.getAttribute("");
+              }
+
+              return accountId ;</Source>
+          </Script>
+        </Field>
+        <Field displayName="Login ID" name="loginId" type="string">
+          <Script>
+            <Source>return identity.getName();</Source>
+          </Script>
+        </Field>
+      </Section>
+    </Form>
+    <Form name="testAdminDiableForm" objectType="account" type="Disable">
+      <Attributes>
+        <Map>
+          <entry key="pageTitle" value="testAdminDiableForm"/>
+        </Map>
+      </Attributes>
+      <Description>testAdminDiableForm</Description>
+      <Section name="Section 1">
+        <Field displayName="Account ID" name="accountId" type="string">
+          <Script>
+            <Source>import sailpoint.object.Application;
+              import sailpoint.object.Identity;
+              import sailpoint.object.Link;
+
+              Application app = context.getObjectByName(Application.class, "");
+
+              Link link = identity.getLink(app);
+              String accountId = null;
+              if(link != null){
+              accountId = (String) link.getAttribute("");
+              }
+
+              return accountId ;</Source>
+          </Script>
+        </Field>
+        <Field displayName="Login ID" name="loginId" type="string">
+          <Script>
+            <Source>return identity.getName();</Source>
+          </Script>
+        </Field>
+      </Section>
+    </Form>
+  </ProvisioningForms>
+  <Schemas>
+    <Schema displayAttribute="emailAddress" groupAttribute="" identityAttribute="loginId" instanceAttribute="" nativeObjectType="user" objectType="account" >
+      <AttributeDefinition name="accountId" type="string">
+        <Description>accountId</Description>
+      </AttributeDefinition>
+      <AttributeDefinition name="loginId" type="string">
+        <Description>loginId</Description>
+      </AttributeDefinition>
+      <AttributeDefinition name="firstName" type="string">
+        <Description>firstName</Description>
+      </AttributeDefinition>
+      <AttributeDefinition name="lastName" type="string">
+        <Description>lastName</Description>
+      </AttributeDefinition>
+      <AttributeDefinition name="emailAddress" type="string">
+        <Description>emailAddress</Description>
+      </AttributeDefinition>
+      <AttributeDefinition name="userType" type="string">
+        <Description>userType</Description>
+      </AttributeDefinition>
+      <AttributeDefinition name="status" type="string">
+        <Description>status</Description>
+      </AttributeDefinition>
+      <AttributeDefinition name="disabled" type="string">
+        <Description>disabled</Description>
+      </AttributeDefinition>
+      <AttributeDefinition name="locked" type="string">
+        <Description>locked</Description>
+      </AttributeDefinition>
+      <AttributeDefinition name="organizationName" type="string">
+        <Description>organizationName</Description>
+      </AttributeDefinition>
+      <AttributeDefinition name="organizationId" type="string">
+        <Description>organizationId</Description>
+      </AttributeDefinition>
+      <AttributeDefinition entitlement="true" managed="true" multi="true" name="roles" type="string">
+        <Description>roles</Description>
+      </AttributeDefinition>
+    </Schema>
+    <Schema descriptionAttribute="" displayAttribute="" identityAttribute="" instanceAttribute="" nativeObjectType="group" objectType="group" />
+  </Schemas>
+  <ApplicationScorecard />
+</Application>
+
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE Rule PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Rule language="beanshell" name="testCustomization" type="ResourceObjectCustomization">
+  <Description>This rule is configured on the application and is called after the connector has build a ResourceObject from the native application data.
+
+Initially designed for non-rule based connectors to add SPPrivileged flag to an object, but could be used to do any transformations.</Description>
+  <Signature returnType="ResourceObject">
+    <Inputs>
+      <Argument name="log" type="org.apache.commons.logging.Log">
+        <Description>
+          The log object associated with the SailPointContext.
+        </Description>
+      </Argument>
+      <Argument name="context" type="sailpoint.api.SailPointContext">
+        <Description>
+          A sailpoint.api.SailPointContext object that can be used to query the database if necessary.
+        </Description>
+      </Argument>
+      <Argument name="object">
+        <Description>
+          The ResourceObject built by the connector.
+        </Description>
+      </Argument>
+      <Argument name="application">
+        <Description>
+          Application that references the connector.
+        </Description>
+      </Argument>
+      <Argument name="connector">
+        <Description>
+          The connector object.
+        </Description>
+      </Argument>
+      <Argument name="state">
+        <Description>
+          A Map containing state information.
+        </Description>
+      </Argument>
+    </Inputs>
+    <Returns>
+      <Argument name="resourceObject">
+        <Description>
+          The updated resource object.
+        </Description>
+      </Argument>
+    </Returns>
+  </Signature>
+  <Source>import java.util.List;
+import sailpoint.object.Filter;
+import sailpoint.object.Identity;
+import sailpoint.object.QueryOptions;
+import sailpoint.object.Custom;
+
+if (object != null) {
+    String emailAddress = (String) object.get("emailAddress");
+
+    if (emailAddress != null &amp;&amp; emailAddress.contains("@")) {
+        String domain = emailAddress.substring(emailAddress.indexOf("@") + 1).trim();
+
+        if (domain.equalsIgnoreCase("xxx.com")) {
+            return object;
+        } else {
+            return null;
+        }
+    } else {
+        return null;
+    }
+}
+return object;</Source>
+</Rule>
+
