@@ -665,3 +665,66 @@ rootLogger.level=warn
 # Uncomment to also write to file appender by default.
 # Also need to uncomment the file appender definition above.
 rootLogger.appenderRef.file.ref=PGERollingLog
+
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import sailpoint.object.ProvisioningPlan;
+import sailpoint.object.ProvisioningPlan.AccountRequest;
+import sailpoint.object.ProvisioningPlan.AttributeRequest;
+import java.util.List;
+
+Log logger = LogFactory.getLog("sailpoint.custom.PlanDebugRule");
+
+if (plan != null) {
+
+    log.error("===== ProvisioningPlan Dump Start =====");
+    log.error("Plan Identity: " + plan.getIdentity());
+    log.error("Plan Target Integration: " + plan.getTargetIntegration());
+	
+	logger.error("===== ProvisioningPlan Dump Start =====");
+    logger.error("Plan Identity: " + plan.getIdentity());
+    logger.error("Plan Target Integration: " + plan.getTargetIntegration());
+
+    List<AccountRequest> acctRequests = plan.getAccountRequests();
+
+    if (acctRequests != null) {
+        for (AccountRequest acctReq : acctRequests) {
+
+            log.error("---- AccountRequest ----");
+            log.error("  Application: " + acctReq.getApplication());
+            log.error("  Operation: " + acctReq.getOperation());
+            log.error("  NativeIdentity: " + acctReq.getNativeIdentity());
+            log.error("  InstanceIdentifier: " + acctReq.getInstance());
+            log.error("  TrackingId: " + acctReq.getTrackingId());
+			
+			            log.error("---- AccountRequest ----");
+            logger.error("  Application: " + acctReq.getApplication());
+            logger.error("  Operation: " + acctReq.getOperation());
+            logger.error("  InstanceIdentifier: " + acctReq.getInstance());
+            logger.error("  TrackingId: " + acctReq.getTrackingId());
+
+            List<AttributeRequest> attrRequests = acctReq.getAttributeRequests();
+
+            if (attrRequests != null) {
+                for (AttributeRequest attrReq : attrRequests) {
+                    log.error("      AttributeRequest -> Name: " + attrReq.getName()
+                        + " | Op: " + attrReq.getOperation()
+                        + " | Value: " + attrReq.getValue()
+                        + " | Assignment: " + attrReq.getAssignmentId());
+						
+						logger.error("      AttributeRequest -> Name: " + attrReq.getName()
+                        + " | Op: " + attrReq.getOperation()
+                        + " | Value: " + attrReq.getValue()
+                        + " | Assignment: " + attrReq.getAssignmentId());
+                }
+            } else {
+                logger.error("      (no AttributeRequests on this AccountRequest)");
+            }
+        }
+    } else {
+        logger.error("(no AccountRequests on this plan)");
+    }
+
+    logger.error("===== ProvisioningPlan Dump End =====");
+}
