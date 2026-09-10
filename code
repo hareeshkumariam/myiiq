@@ -728,3 +728,39 @@ if (plan != null) {
 
     logger.error("===== ProvisioningPlan Dump End =====");
 }
+
+
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import sailpoint.object.ProvisioningPlan;
+import sailpoint.object.ProvisioningPlan.AccountRequest;
+import sailpoint.object.ProvisioningPlan.AttributeRequest;
+import sailpoint.object.ProvisioningPlan.Operation;
+import java.util.ArrayList;
+import java.util.List;
+
+Log log = LogFactory.getLog("sailpoint.custom.PlanDebugRule");
+
+ProvisioningPlan plan = new ProvisioningPlan();
+
+AccountRequest acctReq = new AccountRequest();
+acctReq.setApplication("Primavera Unifier Admin API");
+acctReq.setOperation(AccountRequest.Operation.Create);
+acctReq.setNativeIdentity("jane.smith");
+
+acctReq.add(new AttributeRequest("firstName", Operation.Set, "Jane"));
+acctReq.add(new AttributeRequest("lastName", Operation.Set, "Smith"));
+acctReq.add(new AttributeRequest("emailAddress", Operation.Set, "jane.smith@example.com"));
+acctReq.add(new AttributeRequest("loginId", Operation.Set, "jane.smith"));
+acctReq.add(new AttributeRequest("organizationName", Operation.Set, "Example Company"));
+
+List<String> roles = new ArrayList();
+roles.add("PrimaveraUnifierStage");
+roles.add("BIProductionConsumers");
+acctReq.add(new AttributeRequest("roles", Operation.Add, roles));
+
+plan.add(acctReq);
+
+
+return plan;
