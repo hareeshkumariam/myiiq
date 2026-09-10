@@ -633,4 +633,35 @@ if (object != null) {
 }
 return object;</Source>
 </Rule>
+#####################################
+## PGE Log Appender
+#####################################
+appender.RollingFile.type=RollingFile
+appender.RollingFile.name=PGERollingLog
+appender.RollingFile.fileName=/opt/tomcat/latest/logs/sailpoint.log
+appender.RollingFile.filePattern=/opt/tomcat/latest/logs/sailpoint.%d{yyyy-MMM-dd}-%i.log
+appender.RollingFile.layout.type=PatternLayout
+# appender.RollingFile.layout.pattern=%d{ISO8601} %5p %t %c{4}:%L - %m%n
+appender.RollingFile.layout.pattern = %d{ISO8601} %5p %t %c{4}:%L - %replace{%replace{%m}{\n\r}{__}}{\r\n}{__}%n
+appender.RollingFile.policies.type=Policies
+appender.RollingFile.policies.time.type=TimeBasedTriggeringPolicy
+appender.RollingFile.policies.size.type=SizeBasedTriggeringPolicy
+appender.RollingFile.policies.size.size=100MB
+appender.RollingFile.strategy.type=DefaultRolloverStrategy
+appender.RollingFile.strategy.max=20
 
+#######################################
+## rootLogger
+#######################################
+
+### set default log levels and appenderRef
+### valid log levels in increasing order of severity are: 
+###     trace, debug, info, warn, error, fatal, off
+### trace is required to get method entry and exit logging
+
+rootLogger.level=warn
+#rootLogger.appenderRef.stdout.ref=stdout
+
+# Uncomment to also write to file appender by default.
+# Also need to uncomment the file appender definition above.
+rootLogger.appenderRef.file.ref=PGERollingLog
