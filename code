@@ -1,4 +1,7 @@
-     &lt;ProvisioningResult status="failed">
-        &lt;Errors>
-          &lt;Message key="Exception occurred while performing &amp;apos;Enable&amp;apos; operation on identity &amp;apos;PGEWILLIAMJANSEN&amp;apos;:  Error: Error enabling user for native identity &amp;apos;PGEWILLIAMJANSEN&amp;apos;." type="Error"/>
-        &lt;/Errors>
+[
+  {
+    "id": "$plan.accountId$",
+    "loginId": "$plan.loginId$",
+    "disabled": false
+  }
+]
