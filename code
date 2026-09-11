@@ -1,35 +1,6 @@
-if (plan != null) {
-    List accountRequests = plan.getAccountRequests();
-    if (accountRequests != null) {
-        for (int i = 0; i < accountRequests.size(); i++) {
-            AccountRequest acctReq = (AccountRequest) accountRequests.get(i);
-
-            // Only act on Disable operations
-            if (ObjectOperation.Disable.equals(acctReq.getOperation())) {
-
-                String nativeIdentity = acctReq.getNativeIdentity();
-
-                // Add loginId
-                AttributeRequest loginIdReq = new AttributeRequest();
-                loginIdReq.setName("loginId");
-                loginIdReq.setOperation(Operation.Set);
-                loginIdReq.setValue(nativeIdentity);
-                acctReq.add(loginIdReq);
-
-                // Add id
-                AttributeRequest idReq = new AttributeRequest();
-                idReq.setName("id");
-                idReq.setOperation(Operation.Set);
-                idReq.setValue(nativeIdentity);
-                acctReq.add(idReq);
-
-                // Add disable = true
-                AttributeRequest disableReq = new AttributeRequest();
-                disableReq.setName("disable");
-                disableReq.setOperation(Operation.Set);
-                disableReq.setValue(Boolean.TRUE);
-                acctReq.add(disableReq);
-            }
-        }
-    }
-}
+import sailpoint.object.ProvisioningPlan;
+import sailpoint.object.ProvisioningPlan.AccountRequest;
+import sailpoint.object.ProvisioningPlan.AttributeRequest;
+import sailpoint.object.ProvisioningPlan.Operation;
+import sailpoint.object.ProvisioningPlan.ObjectOperation;
+import java.util.List;
