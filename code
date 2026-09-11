@@ -1,39 +1,35 @@
-import sailpoint.object.ProvisioningPlan;
-import sailpoint.object.ProvisioningPlan.AccountRequest;
-import sailpoint.object.ProvisioningPlan.AttributeRequest;
-import java.util.List;
-import java.util.Iterator;
-
 if (plan != null) {
     List accountRequests = plan.getAccountRequests();
     if (accountRequests != null) {
         for (int i = 0; i < accountRequests.size(); i++) {
             AccountRequest acctReq = (AccountRequest) accountRequests.get(i);
 
-            // Capture nativeIdentity from the account request
-            String nativeIdentity = acctReq.getNativeIdentity();
+            // Only act on Disable operations
+            if (ObjectOperation.Disable.equals(acctReq.getOperation())) {
 
-            // Remove the "roles" AttributeRequest
-            List attrRequests = acctReq.getAttributeRequests();
-            if (attrRequests != null) {
-                Iterator it = attrRequests.iterator();
-                while (it.hasNext()) {
-                    AttributeRequest attrReq = (AttributeRequest) it.next();
-                    if ("roles".equals(attrReq.getName())) {
-                        it.remove();
-                    }
-                }
-            }
+                String nativeIdentity = acctReq.getNativeIdentity();
 
-            // Add a new "loginId" AttributeRequest with the nativeIdentity value
-            if (nativeIdentity != null) {
+                // Add loginId
                 AttributeRequest loginIdReq = new AttributeRequest();
                 loginIdReq.setName("loginId");
-                loginIdReq.setOperation(ProvisioningPlan.Operation.Set);
+                loginIdReq.setOperation(Operation.Set);
                 loginIdReq.setValue(nativeIdentity);
                 acctReq.add(loginIdReq);
+
+                // Add id
+                AttributeRequest idReq = new AttributeRequest();
+                idReq.setName("id");
+                idReq.setOperation(Operation.Set);
+                idReq.setValue(nativeIdentity);
+                acctReq.add(idReq);
+
+                // Add disable = true
+                AttributeRequest disableReq = new AttributeRequest();
+                disableReq.setName("disable");
+                disableReq.setOperation(Operation.Set);
+                disableReq.setValue(Boolean.TRUE);
+                acctReq.add(disableReq);
             }
         }
     }
 }
-
