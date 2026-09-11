@@ -1,1 +1,39 @@
-test
+import sailpoint.object.ProvisioningPlan;
+import sailpoint.object.ProvisioningPlan.AccountRequest;
+import sailpoint.object.ProvisioningPlan.AttributeRequest;
+import java.util.List;
+import java.util.Iterator;
+
+if (plan != null) {
+    List accountRequests = plan.getAccountRequests();
+    if (accountRequests != null) {
+        for (int i = 0; i < accountRequests.size(); i++) {
+            AccountRequest acctReq = (AccountRequest) accountRequests.get(i);
+
+            // Capture nativeIdentity from the account request
+            String nativeIdentity = acctReq.getNativeIdentity();
+
+            // Remove the "roles" AttributeRequest
+            List attrRequests = acctReq.getAttributeRequests();
+            if (attrRequests != null) {
+                Iterator it = attrRequests.iterator();
+                while (it.hasNext()) {
+                    AttributeRequest attrReq = (AttributeRequest) it.next();
+                    if ("roles".equals(attrReq.getName())) {
+                        it.remove();
+                    }
+                }
+            }
+
+            // Add a new "loginId" AttributeRequest with the nativeIdentity value
+            if (nativeIdentity != null) {
+                AttributeRequest loginIdReq = new AttributeRequest();
+                loginIdReq.setName("loginId");
+                loginIdReq.setOperation(ProvisioningPlan.Operation.Set);
+                loginIdReq.setValue(nativeIdentity);
+                acctReq.add(loginIdReq);
+            }
+        }
+    }
+}
+
