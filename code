@@ -1,71 +1,16 @@
-import sailpoint.object.ProvisioningPlan;
-import sailpoint.object.ProvisioningPlan.AccountRequest;
-import sailpoint.object.ProvisioningPlan.AttributeRequest;
-
-import java.util.List;
-
-if (plan != null) {
-
-    List<AccountRequest> accountRequests = plan.getAccountRequests();
-
-    if (accountRequests != null) {
-
-        for (AccountRequest accountRequest : accountRequests) {
-
-            if (accountRequest == null) {
-                continue;
-            }
-
-            // Check for Enable operation
-            if (AccountRequest.Operation.Enable.equals(accountRequest.getOperation())) {
-
-                // Get accountId and loginId from the provisioning plan
-                String accountId = null;
-                String loginId = null;
-
-                List<AttributeRequest> attributeRequests =
-                    accountRequest.getAttributeRequests();
-
-                if (attributeRequests != null) {
-                    for (AttributeRequest attrRequest : attributeRequests) {
-
-                        if ("accountId".equalsIgnoreCase(attrRequest.getName())) {
-                            accountId = String.valueOf(attrRequest.getValue());
-                        }
-
-                        if ("loginId".equalsIgnoreCase(attrRequest.getName())) {
-                            loginId = String.valueOf(attrRequest.getValue());
-                        }
-                    }
-                }
-
-                /*
-                 * Add/modify the attributes that are used by the
-                 * Web Services connector to construct the request body.
-                 */
-                if (accountId != null) {
-                    accountRequest.add(new AttributeRequest(
-                        "accountId",
-                        ProvisioningPlan.Operation.Set,
-                        accountId
-                    ));
-                }
-
-                if (loginId != null) {
-                    accountRequest.add(new AttributeRequest(
-                        "loginId",
-                        ProvisioningPlan.Operation.Set,
-                        loginId
-                    ));
-
-                }
-
-                accountRequest.add(new AttributeRequest(
-                    "disabled",
-                    ProvisioningPlan.Operation.Set,
-                    false
-                ));
-            }
-        }
-    }
-}
+<Profiles>
+    <Profile created="" id="">
+      <ApplicationRef>
+        <Reference class="sailpoint.object.Application" id="" name=""/>
+      </ApplicationRef>
+      <Constraints>
+        <Filter operation="CONTAINS_ALL" property="groups">
+          <Value>
+            <List>
+              <String></String>
+            </List>
+          </Value>
+        </Filter>
+      </Constraints>
+    </Profile>
+  </Profiles>
