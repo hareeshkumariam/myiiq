@@ -1,30 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE Workflow PUBLIC "sailpoint.dtd" "sailpoint.dtd">
-<Workflow created="1791889273890" explicitTransitions="true" id="c0a80006a11f14fe81a134ec7422090c" modified="1791897584250" name="Rest API - Workflow" significantModified="1791897584250">
-  <Variable input="true" name="userId"/>
-  <Variable input="true" name="userId1"/>
-  <Variable input="true" name="userId2"/>
-  <Variable input="true" name="userId3"/>
-  <Variable input="true" name="userId4"/>
-  <Variable input="true" name="userId5"/>
-  <Variable input="true" name="userId6"/>
-  <Variable input="true" name="userId7"/>
-  <Variable input="true" name="userId8"/>
-  <Variable input="true" name="userId9"/>
-  <Variable input="true" name="userId10"/>
+<Workflow created="1791942327453" explicitTransitions="true" id="c0a80004a1371d7081a13815fc9d0036" modified="1791997030017" name="Rest API - Workflow1" significantModified="1791997030017">
+  <Variable input="true" name="users"/>
   <Variable initializer="string:none" name="approvalScheme"/>
   <Variable name="requestedUsersCount"/>
   <Variable name="usersToBeDeactivated"/>
   <Variable input="true" name="requestedBy"/>
   <Variable initializer="true" name="trace">
     <Description>enable this to see stuff spit out to stdout</Description>
-  </Variable>
-  <Variable initializer="ref:userId" input="true" name="identityName">
-    <Description>The name of the identity.</Description>
-  </Variable>
-  <Variable initializer="script:(identityDisplayName != void) ? identityDisplayName : resolveDisplayName(identityName)" input="true" name="identityDisplayName">
-    <Description>The displayName of the identity being updated.
-      Query for this using a projection query and fall back to the name.</Description>
   </Variable>
   <Variable initializer="string:AccountsRequest" input="true" name="flow">
     <Description>What type of LCM flow is this</Description>
@@ -201,413 +184,398 @@
   <Variable name="identityRequestId"/>
   <Variable input="true" name="OrganizationalRoleCn"/>
   <Variable input="true" name="action"/>
-  <Variable initializer="&quot;0&quot;" input="true" name="currentUserIndex"/>
+  <Variable input="true" name="currentUserIndex"/>
+  <Variable input="true" name="identityName"/>
+  <Variable input="true" name="identityDisplayName">
+    <Description>The displayName of the identity being updated.
+      Query for this using a projection query and fall back to the name.</Description>
+  </Variable>
+  <Variable input="true" name="currentUser"/>
+  <Variable input="true" name="Identity"/>
+  <Variable name="notProvisionedUsers"/>
+  <Variable name="successfullyProvisionedUsers"/>
+  <Variable name="requestIdToUserName"/>
+  <Variable name="ineligibleUsers"/>
   <Step icon="Start" name="Start" posX="20" posY="20">
     <Transition to="Validate Users"/>
   </Step>
-  <Step icon="Default" name="Validate Users" posX="149" posY="15" resultVariable="checkCondition">
+  <Step icon="Default" name="Validate Users" posX="139" posY="99" resultVariable="checkCondition">
     <Script>
-      <Source>import sailpoint.object.*;
-import sailpoint.api.IdentityService;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
+      <Source>
+        import sailpoint.object.*;
+        import sailpoint.api.IdentityService;
+        import java.util.List;
+        import java.util.ArrayList;
+        import java.util.Set;
+        import java.util.HashSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+        import org.apache.commons.logging.Log;
+        import org.apache.commons.logging.LogFactory;
 
-private static Log logger = LogFactory.getLog("Rest API Workflow");
+        private static Log logger =
+        LogFactory.getLog("Rest API Workflow");
 
-logger.info("Entered Validation Step for Rest API Users");
+        logger.info("Entered Validation Step for Rest API Users");
 
-Set usersSet = new HashSet();
-usersSet.add(userId1);
-usersSet.add(userId2);
-usersSet.add(userId3);
-usersSet.add(userId4);
-usersSet.add(userId5);
-usersSet.add(userId6);
-usersSet.add(userId7);
-usersSet.add(userId8);
-usersSet.add(userId9);
-usersSet.add(userId10);
+        // Read comma-separated users from workflow input
+        String users = (String) workflow.get("users");
 
+        Set usersSet = new HashSet();
 
-usersSet.remove("");
-// Count the distinct, non-empty users originally submitted
-int requestedUsersCount = usersSet.size();
+        if (users != null &amp;&amp; !users.trim().isEmpty()) {
 
-workflow.put("requestedUsersCount",
-    Integer.valueOf(requestedUsersCount));
+        String[] userArray = users.split(",");
 
-// More than 5 users: approval required
-// 5 or fewer users: no approval
-String selectedApprovalScheme = "none";
+        for (String uid : userArray) {
 
-if (requestedUsersCount > 5) {
-    selectedApprovalScheme = "spadmin";
-}
+        if (uid != null &amp;&amp; !uid.trim().isEmpty()) {
+        usersSet.add(uid.trim());
+        }
+        }
+        }
 
-workflow.put("approvalScheme", selectedApprovalScheme);
+        // Count distinct, non-empty users
+        int requestedUsersCount = usersSet.size();
 
-logger.info("Requested users count: " + requestedUsersCount);
-logger.info("Selected approval scheme: " + selectedApprovalScheme);
-usersSet.remove(null);
+        workflow.put("requestedUsersCount",
+        Integer.valueOf(requestedUsersCount));
 
-List validUsersList = new ArrayList();
-List invalidUsersList = new ArrayList();
+        // More than 5 users: approval required
+        String selectedApprovalScheme = "none";
 
-Application application =
-    context.getObjectByName(Application.class, "AD");
+        if (requestedUsersCount > 5) {
+        selectedApprovalScheme = "spadmin";
+        }
 
-IdentityService idSvc = new IdentityService(context);
+        workflow.put("approvalScheme", selectedApprovalScheme);
 
-for (String uid : usersSet) {
+        logger.info("Requested users count: " + requestedUsersCount);
+        logger.info("Selected approval scheme: " + selectedApprovalScheme);
 
-    Identity iden =
+        List validUsersList = new ArrayList();
+        List invalidUsersList = new ArrayList();
+
+        Application application =
+        context.getObjectByName(Application.class, "neymar");
+
+        IdentityService idSvc = new IdentityService(context);
+
+        for (Object obj : usersSet) {
+
+        String uid = (String) obj;
+
+        Identity iden =
         context.getObjectByName(Identity.class, uid);
 
-    if (iden == null) {
-        invalidUsersList.add(uid + " - Identity does not exist");
+        if (iden == null) {
+        invalidUsersList.add(
+        uid + " - Identity does not exist");
         continue;
-    }
+        }
 
-    if (iden.isInactive()) {
-        invalidUsersList.add(uid + " - Identity is inactive");
+        if (iden.isInactive()) {
+        invalidUsersList.add(
+        uid + " - Identity is inactive");
         continue;
-    }
+        }
 
-    boolean isEnabledADAccount = false;
+        boolean isEnabledADAccount = false;
 
-    if (application != null) {
-		if(iden !=null){
+        if (application != null) {
+
         List links = idSvc.getLinks(iden, application);
 
         if (links != null) {
-            for (Link l : links) {
-                if (!l.isDisabled()) {
-                    isEnabledADAccount = true;
-                    break;
-                }
-            }
-        }
-    }
-}
+        for (Object linkObj : links) {
 
-    if (isEnabledADAccount) {
-        validUsersList.add(uid);
-    } else {
-        invalidUsersList.add(uid + " - AD account does not exist or is disabled");
-    }
-}
-
-logger.info("Eligible users: " + validUsersList);
-logger.info("Ineligible users: " + invalidUsersList);
-
-workflow.put("usersToBeDeactivated", validUsersList);
-workflow.put("ineligibleUsers", invalidUsersList);
-
-boolean checkCondition = validUsersList.isEmpty();
-
-workflow.put("checkCondition", checkCondition);
-
-if (checkCondition) {
-    workflow.put("message",
-        "No eligible users found. " + invalidUsersList.toString());
-    logger.info("No eligible users found.");
-    return true;
-} else {
-    workflow.put("message",
-        invalidUsersList.isEmpty()
-            ? ""
-            : "The following users are ineligible: "
-                + invalidUsersList.toString());
-
-    logger.info("Eligible users will proceed to Build Plan: "
-        + validUsersList);
-
-    return false;
-}</Source>
-    </Script>
-    <Transition to="Build Plan"/>
-  </Step>
-  <Step icon="Default" name="Build Plan" posX="268" posY="126" resultVariable="plan">
-    <Script>
-      <Source>import sailpoint.object.*;
-import sailpoint.api.IdentityService;
-import sailpoint.object.ProvisioningPlan;
-import sailpoint.object.ProvisioningPlan.AccountRequest;
-import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-private static Log logger =
-    LogFactory.getLog("Service Now Workflow");
-
-List usersToBeDeactivated =
-    (List) workflow.get("usersToBeDeactivated");
-
-Integer currentUserIndex =
-    (Integer) workflow.get("currentUserIndex");
-
-if (currentUserIndex == null) {
-    currentUserIndex = Integer.valueOf(0);
-}
-
-if (usersToBeDeactivated == null ||
-    currentUserIndex.intValue() >= usersToBeDeactivated.size()) {
-    logger.info("All eligible users have been processed.");
-    return null;
-}
-
-String uid = (String) usersToBeDeactivated.get(
-    currentUserIndex.intValue()
-);
-
-Identity identity =
-    context.getObjectByName(Identity.class, uid);
-
-if (identity == null || identity.isInactive()) {
-    logger.warn("Skipping missing or inactive identity: " + uid);
-    workflow.put("currentUserIndex",
-        Integer.valueOf(currentUserIndex.intValue() + 1));
-    return null;
-}
-
-Application adApplication =
-    context.getObjectByName(Application.class, "AD");
-
-if (adApplication == null) {
-    throw new Exception("AD application was not found.");
-}
-
-IdentityService idSvc = new IdentityService(context);
-List links = idSvc.getLinks(identity, adApplication);
-
-Link adLink = null;
-
-if (links != null) {
-    for (Object obj : links) {
-        Link link = (Link) obj;
+        Link link = (Link) linkObj;
 
         if (!link.isDisabled()) {
-            adLink = link;
-            break;
+        isEnabledADAccount = true;
+        break;
         }
-    }
-}
+        }
+        }
+        }
 
-if (adLink == null) {
-    logger.warn("No enabled AD account found for: " + uid);
-    workflow.put("currentUserIndex",
-        Integer.valueOf(currentUserIndex.intValue() + 1));
-    return null;
-}
+        if (isEnabledADAccount) {
+        validUsersList.add(uid);
+        } else {
+        invalidUsersList.add(
+        uid + " - AD account does not exist or is disabled");
+        }
+        }
+        System.out.println("validUsersList::::::::::::::"+validUsersList);
+        System.out.println("invalidUsersList::::::::::::::"+invalidUsersList);
+        logger.info("Eligible users: " + validUsersList);
+        logger.info("Ineligible users: " + invalidUsersList);
 
-ProvisioningPlan plan = new ProvisioningPlan();
-plan.setIdentity(identity);
+        workflow.put("usersToBeDeactivated", validUsersList);
+        workflow.put("ineligibleUsers", invalidUsersList);
 
-AccountRequest accountRequest = new AccountRequest();
-accountRequest.setApplication("AD");
-accountRequest.setNativeIdentity(adLink.getNativeIdentity());
-accountRequest.setOperation(AccountRequest.Operation.Disable);
+        boolean checkCondition = validUsersList.isEmpty();
 
-plan.add(accountRequest);
+        workflow.put("checkCondition", checkCondition);
 
-workflow.put("currentUser", uid);
-workflow.put("plan", plan);
+        if (checkCondition) {
 
-logger.info("Created AD disable plan for user: " + uid);
+        workflow.put("message",
+        "No eligible users found. " + invalidUsersList.toString());
 
-return plan;</Source>
+        logger.info("No eligible users found.");
+        return true;
+
+        } else {
+
+        workflow.put("message",
+        invalidUsersList.isEmpty()
+        ? ""
+        : "The following users are ineligible: "
+        + invalidUsersList.toString());
+
+        logger.info(
+        "Eligible users will proceed to Build Plan: "
+        + validUsersList);
+
+        return false;
+        }
+      </Source>
     </Script>
-    <Transition to="Initialize"/>
+    <Transition to="Build Plan and Provision For Deactivate user request"/>
   </Step>
-  <Step icon="Default" name="Initialize" posX="371" posY="10">
-    <Arg name="formTemplate" value="Identity Update"/>
-    <Arg name="approvalScheme" value="ref:approvalScheme"/>
-    <Arg name="enableRetryRequest"/>
-    <Arg name="allowRequestsWithViolations"/>
-    <Arg name="endOnManualWorkItems"/>
-    <Arg name="policiesToCheck"/>
-    <Arg name="workItemPriority"/>
-    <Arg name="workItemComments"/>
-    <Arg name="project"/>
-    <Arg name="identityRequestId"/>
-    <Arg name="source" value="ref:source"/>
-    <Arg name="identityDisplayName" value="ref:identityDisplayName"/>
-    <Arg name="requireViolationReviewComments"/>
-    <Arg name="identityRequest" value="ref:identityRequestId"/>
-    <Arg name="trace" value="ref:trace"/>
-    <Arg name="enableApprovalRecommendations"/>
-    <Arg name="endOnProvisioningForms"/>
-    <Arg name="plan" value="ref:plan"/>
-    <Arg name="flow"/>
-    <Arg name="requester" value="ref:requestedBy"/>
-    <Arg name="identityName" value="ref:identityName"/>
-    <Arg name="approvalSet"/>
-    <Arg name="policyViolations"/>
-    <Arg name="violationReviewDecision"/>
-    <Arg name="policyScheme" value="none"/>
-    <Arg name="priority" value="ref:workItemPriority"/>
-    <Arg name="asyncCacheRefresh"/>
-    <Arg name="optimisticProvisioning" value="ref:optimisticProvisioning"/>
-    <Arg name="launcher" value="ref:requestedBy"/>
-    <Description>
-      Call the standard subprocess to initialize the accountRequestObject, this includes
-      auditing, building the approvalset, compiling the plan into 
-      project and checking policy violations.
-    </Description>
-    <Return name="project" to="project"/>
-    <Return name="approvalSet" to="approvalSet"/>
-    <Return name="identityRequestId" to="identityRequestId"/>
-    <Return name="policyViolations" to="policyViolations"/>
-    <WorkflowRef>
-      <Reference class="sailpoint.object.Workflow" id="c0a800099f2c1da7819f2c2e3bd8002f" name="Identity Request Initialize"/>
-    </WorkflowRef>
-    <Transition to="Provision"/>
-  </Step>
-  <Step icon="Default" name="Provision" posX="471" posY="15">
-    <Arg name="formTemplate" value="Identity Update"/>
-    <Arg name="approvalScheme" value="ref:approvalScheme"/>
-    <Arg name="fallbackApprover" value="string:spadmin"/>
-    <Arg name="endOnManualWorkItems"/>
-    <Arg name="userEmailTemplate"/>
-    <Arg name="policiesToCheck"/>
-    <Arg name="workItemComments"/>
-    <Arg name="workItemPriority"/>
-    <Arg name="project" value="ref:project"/>
-    <Arg name="identityRequestId"/>
-    <Arg name="source"/>
-    <Arg name="foregroundProvisioning" value="string:true"/>
-    <Arg name="identityDisplayName" value="ref:identityDisplayName"/>
-    <Arg name="approvalMode"/>
-    <Arg name="trace" value="ref:trace"/>
-    <Arg name="batchRequestItemId"/>
-    <Arg name="saveUnmanagedPlan_WithProjectArgument"/>
-    <Arg name="recompile"/>
-    <Arg name="doRefresh"/>
-    <Arg name="endOnProvisioningForms"/>
-    <Arg name="approverElectronicSignature"/>
-    <Arg name="plan"/>
-    <Arg name="flow" value="string:AccountsRequest"/>
-    <Arg name="identityName" value="ref:identityName"/>
-    <Arg name="notificationScheme"/>
-    <Arg name="approvalSet"/>
-    <Arg name="manualActionsEmailTemplate" value="Pending Manual Changes"/>
-    <Arg name="policyViolations"/>
-    <Arg name="policyScheme"/>
-    <Arg name="priority"/>
-    <Arg name="splitProvisioning"/>
-    <Arg name="saveUnmanagedPlan"/>
-    <Arg name="noTriggers"/>
-    <Arg name="approvalForm"/>
-    <Arg name="requesterEmailTemplate"/>
-    <Arg name="approvalEmailTemplate"/>
-    <Arg name="ticketManagementApplication"/>
-    <Arg name="optimisticProvisioning" value="string:true"/>
-    <Arg name="securityOfficerEmailTemplate"/>
-    <Arg name="securityOfficerName"/>
-    <Arg name="managerEmailTemplate"/>
-    <Arg name="ticketId"/>
-    <Arg name="launcher" value="string:spadmin"/>
-    <Description>
-      Call the standard subprocess that will process the
-      approval decisions and do provisioning.  This
-      includes calling any configured provisioning
-      connectors and building manual actions.
-    </Description>
-    <Return name="project" to="project"/>
-    <WorkflowRef>
-      <Reference class="sailpoint.object.Workflow" id="c0a800099f2c1da7819f2c2e3c970032" name="Identity Request Provision"/>
-    </WorkflowRef>
-    <Transition to="check provision step"/>
-  </Step>
-  <Step icon="Default" name="check provision step" posX="568" posY="18">
+  <Step icon="Task" name="Build Plan and Provision For Deactivate user request" posX="653" posY="20">
     <Script>
-      <Source>import sailpoint.object.*;
-import sailpoint.object.ProvisioningPlan;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+      <Source>
+        import sailpoint.api.IdentityService;
+        import sailpoint.api.Workflower;
+        import sailpoint.object.Application;
+        import sailpoint.object.Identity;
+        import sailpoint.object.Link;
+        import sailpoint.object.ProvisioningPlan;
+        import sailpoint.object.ProvisioningPlan.AccountRequest;
+        import sailpoint.object.WorkflowLaunch;
 
-private static Log logger =
-    LogFactory.getLog("Service Now Workflow");
+        import java.util.ArrayList;
+        import java.util.HashMap;
+        import java.util.LinkedHashMap;
+        import java.util.List;
+        import java.util.Map;
 
-logger.info("Entered Check Provision Status step");
+        import org.apache.commons.logging.Log;
+        import org.apache.commons.logging.LogFactory;
 
-ProvisioningPlan plan =
-    (ProvisioningPlan) workflow.get("plan");
+        private static Log logger =
+        LogFactory.getLog("Rest API Workflow");
 
-String currentUser =
-    (String) workflow.get("currentUser");
+        logger.info("Starting bulk provisioning");
 
-Integer currentUserIndex =
-    (Integer) workflow.get("currentUserIndex");
+        List usersToBeDeactivated =
+        (List) workflow.get("usersToBeDeactivated");
 
-List usersToBeDeactivated =
-    (List) workflow.get("usersToBeDeactivated");
 
-String message = "";
+        List usersalreadyBeDeactivated =
+        (List) workflow.get("ineligibleUsers");
 
-if (plan == null) {
-    message = "Provisioning plan not found for user: " + currentUser;
-    logger.error(message);
-} else {
-    ProvisioningPlan.AccountRequest accountRequest =
-        (ProvisioningPlan.AccountRequest) plan.getAccountRequests().get(0);
 
-    ProvisioningResult result =
-        accountRequest.getResult();
+        Map requestIdToUserName = new LinkedHashMap();
 
-    if (result != null &amp;&amp;
-        ProvisioningResult.STATUS_COMMITTED.equals(result.getStatus())) {
+        if (usersToBeDeactivated == null ||
+        usersToBeDeactivated.isEmpty()) {
 
-        message = "AD account disabled successfully for user: "
-            + currentUser;
+        logger.warn("No eligible users found.");
 
-        logger.info(message);
+        workflow.put("requestIdToUserName",
+        requestIdToUserName);
 
-    } else {
-        message = "AD account disable failed or is incomplete for user: "
-            + currentUser;
+        workflow.put("message", "No eligible users found.");
 
-        if (result != null &amp;&amp; result.getErrors() != null) {
-            message = message + ". Errors: " + result.getErrors();
+        } else {
+
+        Application application =
+        context.getObjectByName(Application.class, "neymar");
+
+        if (application == null) {
+        throw new Exception(
+        "Application 'neymar' was not found.");
         }
 
-        logger.error(message);
-    }
-}
+        IdentityService idSvc = new IdentityService(context);
 
-workflow.put("currentUserProvisioningMessage", message);
+        for (Object userObj : usersToBeDeactivated) {
 
-// Move to the next user after recording this user's result
-if (currentUserIndex == null) {
-    currentUserIndex = Integer.valueOf(0);
-}
+        String uid = String.valueOf(userObj);
 
-workflow.put("currentUserIndex",
-    Integer.valueOf(currentUserIndex.intValue() + 1));
+        try {
 
-return true;</Source>
+        logger.info("Processing user: " + uid);
+
+        Identity identity =
+        context.getObjectByName(Identity.class, uid);
+
+        if (identity == null) {
+        logger.warn(
+        "Identity not found: " + uid);
+        continue;
+        }
+
+        List links = idSvc.getLinks(identity, application);
+        Link matchingLink = null;
+
+        if (links != null) {
+        for (Object linkObj : links) {
+
+        Link link = (Link) linkObj;
+        Object empId =
+        link.getAttribute("Emp_id");
+
+        if (!link.isDisabled()
+        &amp;&amp; empId != null
+        &amp;&amp; uid.equalsIgnoreCase(
+        String.valueOf(empId))) {
+
+        matchingLink = link;
+        break;
+        }
+        }
+        }
+
+        if (matchingLink == null) {
+        logger.warn(
+        "No matching enabled account found for: "
+        + uid);
+        continue;
+        }
+
+        ProvisioningPlan plan = new ProvisioningPlan();
+        plan.setIdentity(identity);
+        plan.setNativeIdentity(identity.getName());
+
+        AccountRequest accReq = new AccountRequest();
+
+        accReq.setApplication(
+        matchingLink.getApplicationName());
+
+        accReq.setNativeIdentity(
+        matchingLink.getNativeIdentity());
+
+        accReq.setOperation(
+        AccountRequest.Operation.Disable);
+
+        List accountReqList = new ArrayList();
+        accountReqList.add(accReq);
+
+        plan.setAccountRequests(accountReqList);
+
+        Map args = new HashMap();
+
+        args.put("plan", plan);
+        args.put("identityName", identity.getName());
+        args.put("flow", "AccountsRequest");
+        args.put("doRefresh", "true");
+        args.put("source", "LCM");
+        args.put("launcher", context.getUserName());
+        args.put("approvalMode", "any");
+
+        Object countObj =
+        workflow.get("requestedUsersCount");
+
+        int requestedCount = 0;
+
+        if (countObj instanceof Number) {
+        requestedCount =
+        ((Number) countObj).intValue();
+        } else if (countObj != null) {
+        requestedCount =
+        Integer.parseInt(countObj.toString());
+        }
+
+        if (requestedCount > 5) {
+        args.put("approvalScheme", "manager");
+        } else {
+        args.put("approvalScheme", "none");
+        }
+
+        args.put("notificationScheme", "none");
+        args.put("noFiltering", "true");
+        args.put("foregroundProvisioning", "true");
+
+        WorkflowLaunch wflaunch = new WorkflowLaunch();
+
+        wflaunch.setWorkflowRef("LCM Provisioning");
+        wflaunch.setVariables(args);
+
+        Workflower workflower = new Workflower(context);
+
+        wflaunch = workflower.launch(wflaunch);
+
+        logger.info(
+        "Workflow status for " + uid + ": "
+        + wflaunch.getStatus());
+
+        logger.info(
+        "Workflow messages for " + uid + ": "
+        + wflaunch.getMessages());
+
+        // Retrieve the Identity Request ID
+        String accessRequestId = null;
+
+        if (wflaunch.getTaskResult() != null) {
+
+        Object requestIdObj =
+        wflaunch.getTaskResult().getAttribute(
+        "identityRequestId");
+
+        if (requestIdObj != null) {
+        accessRequestId =
+        String.valueOf(requestIdObj);
+        }
+        }
+
+        // Store request ID as key and user name as value
+        if (accessRequestId != null
+        &amp;&amp; !accessRequestId.trim().isEmpty()) {
+
+        requestIdToUserName.put(
+        identity.getName(),accessRequestId);
+
+        logger.info(
+        "Stored request ID: " + accessRequestId
+        + ", User: " + identity.getName());
+
+        } else {
+
+        logger.warn(
+        "Request ID was not returned for user: "
+        + uid);
+        }
+
+        } catch (Exception e) {
+
+        logger.error(
+        "Error processing user: " + uid, e);
+        }
+        }
+
+        // Save the map for the next workflow step
+        workflow.put("requestIdToUserName",
+        requestIdToUserName);
+
+        logger.info(
+        "Final request ID to user name map: "
+        + requestIdToUserName);
+
+        workflow.put(
+        "message",
+        "Request ID to user name map: "
+        + requestIdToUserName);
+        }
+
+        return null;
+      </Source>
     </Script>
-    <Transition to="Build Plan">
-      <Script>
-        <Source>List usersToBeDeactivated =
-    (List) workflow.get("usersToBeDeactivated");
-
-Integer currentUserIndex =
-    (Integer) workflow.get("currentUserIndex");
-
-return usersToBeDeactivated != null
-    &amp;&amp; currentUserIndex != null
-    &amp;&amp; currentUserIndex.intValue() &lt; usersToBeDeactivated.size();</Source>
-      </Script>
-    </Transition>
     <Transition to="notify"/>
   </Step>
-  <Step icon="Default" name="notify" posX="732" posY="32">
+  <Step icon="Default" name="notify" posX="757" posY="140">
     <Arg name="approvalScheme"/>
     <Arg name="identityName"/>
     <Arg name="notificationScheme"/>
@@ -623,10 +591,102 @@ return usersToBeDeactivated != null
     <Arg name="plan"/>
     <Arg name="flow"/>
     <Arg name="managerEmailTemplate"/>
-    <WorkflowRef>
-      <Reference class="sailpoint.object.Workflow" id="c0a800099f2c1da7819f2c2e3c3f0031" name="Identity Request Notify"/>
-    </WorkflowRef>
+    <Script>
+      <Source>
+        import java.util.List;
+        import java.util.Map;
+        import java.util.HashMap;
+
+        import sailpoint.object.EmailTemplate;
+        import sailpoint.object.EmailOptions;
+        import sailpoint.object.EmailFileAttachment;
+
+        System.out.println("requestIdToUserName:" + requestIdToUserName);
+        System.out.println("ineligibleones:" + ineligibleUsers);
+
+        public static String generateCsv(
+        List inputFile,
+        Map mapRequestIdToUserName) {
+
+        StringBuilder contents = new StringBuilder();
+
+        Map userNameToRequestId = new HashMap();
+
+        for (Map.Entry entry :
+        mapRequestIdToUserName.entrySet()) {
+        userNameToRequestId.put(entry.getValue(), entry.getKey());
+        }
+
+        for (List list1 : inputFile) {
+        for (int i = 0; i &lt; list1.size(); i++) {
+
+        Object value = list1.get(i);
+
+        if (value != null) {
+        String userName = value.toString();
+
+        // Get requestId using userName
+        String requestId = userNameToRequestId.get(userName);
+
+        if (requestId != null) {
+        contents.append(requestId);
+        } else {
+        contents.append(userName);
+        }
+        }
+
+        if (i &lt; list1.size() - 1) {
+        contents.append(",");
+        }
+        }
+
+        contents.append("\n");
+        }
+
+        return contents.toString();
+        }
+
+
+        List usersToBeDeactivated =
+        (List) workflow.get("usersToBeDeactivated");
+
+
+        String recieipnts = "";
+
+        boolean isEmailSent = false;
+        Map argList = new HashMap();
+
+        try{
+        EmailTemplate template = context.getObjectByName(EmailTemplate.class, "");
+        if(null != template){
+        EmailOptions ops = new EmailOptions(recieipnts, argList);
+        if(usersToBeDeactivated != null &amp;&amp; !usersToBeDeactivated.isEmpty()){
+        String processedUsersAttchedFile = generateCsv(usersToBeDeactivated);
+        EmailFileAttachment processedIdenAttachement = new EmailFileAttachment("", EmailFileAttachment.MimeType.MIME_CSV,
+        processedUsersAttchedFile.toString().getBytes());
+        ops.addAttachment(processedIdenAttachement);
+        }
+        context.sendEmailNotification(template, ops);
+        }
+        isEmailSent = true;
+        }
+        catch (Exception e) {
+        log.error("Error Occurred while sending the mail");
+        isEmailSent = false;
+        e.printStackTrace();
+        }
+
+      </Source>
+    </Script>
     <Transition to="Stop"/>
   </Step>
-  <Step icon="Stop" name="Stop" posX="851" posY="31"/>
+  <Step icon="Stop" name="Stop" posX="855" posY="20"/>
 </Workflow>
+
+
+http://localhost:8080/identityiq/rest/workflows/Rest%20API%20-%20Workflow1/launch
+{
+  "workflowArgs": {
+    "users": "837,9001,9002,9003,922,6006"
+  }
+}
