@@ -1,31 +1,6 @@
-Subject: MEA User Disablement Request status
-
-Hello Team,
-
-The user disablement request has been processed by the MEA team.
-
-Request Details:
-
-Submitted By: ${Requester}
-//Firewall Certification ID: ${CertificationID}
-Processed Date: ${ProcessedDate}
-Processing Summary:
-Total Users Submitted: ${TotalUsers}
-Users Processed for Disable: ${DisabledCount}
-Users Already Disabled/Inactive (Skipped): ${SkippedCount}
-
-Please find the attached report containing the user-level processing along with their Request IDs
-Click link to check the status of reuest: 
-
-Status Definitions
-
-Skipped – User account was already disabled; no action was required.
-
-If you have any questions regarding the results, please contact the MEA team.
-----------------------------------------------------------------------------------------------------
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE Workflow PUBLIC "sailpoint.dtd" "sailpoint.dtd">
-<Workflow  explicitTransitions="true" name="xxx-Workflowflow-NPS-UDNAccountDisable">
+<Workflow created="1792158484872" explicitTransitions="true" id="c0a80005a1441b4481a144f84988003d" modified="1792158565325" name="xxx-Workflowflow-NPS-UDNAccountDisable" significantModified="1792158565325">
   <Variable input="true" name="users"/>
   <Variable initializer="string:none" name="approvalScheme"/>
   <Variable name="requestedUsersCount"/>
@@ -219,6 +194,7 @@ If you have any questions regarding the results, please contact the MEA team.
   <Variable input="true" name="Identity"/>
   <Variable name="notProvisionedUsers"/>
   <Variable name="successfullyProvisionedUsers"/>
+  <Variable input="true" name="certificationID"/>
   <Variable name="requestIdToUserName"/>
   <Variable name="ineligibleUsers"/>
   <Step icon="Start" name="Start" posX="20" posY="20">
@@ -647,8 +623,34 @@ If you have any questions regarding the results, please contact the MEA team.
         import sailpoint.object.EmailOptions;
         import sailpoint.object.EmailFileAttachment;
 
-        System.out.println("requestIdToUserName:" + requestIdToUserName);
-        System.out.println("ineligibleones:" + ineligibleUsers);
+        // Get workflow variables
+        List usersToBeDeactivated =
+        (List) workflow.get("usersToBeDeactivated");
+
+        List ineligibleUsers =
+        (List) workflow.get("ineligibleUsers");
+
+        Map requestIdToUserName =
+        (Map) workflow.get("requestIdToUserName");
+
+       
+        // Log values
+        log.error("requestedby: " + requestedby);
+        log.error("CertificationID: " + certificationID);
+        log.error("usersToBeDeactivated: " + usersToBeDeactivated);
+        log.error("ineligibleUsers: " + ineligibleUsers);
+        log.error("requestIdToUserName: " + requestIdToUserName);
+
+     
+        // Calculate counts
+        int disabledCount = usersToBeDeactivated.size();
+        int skippedCount = ineligibleUsers.size();
+
+        int totalUsers = disabledCount + skippedCount;
+
+        // Current processed date
+        String processedDate =
+        new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
 
         public static String generateCsv(
         List inputFile,
@@ -664,12 +666,8 @@ If you have any questions regarding the results, please contact the MEA team.
         }
 
         for (String value : inputFile) {
-       // for (int i = 0; i &lt; list1.size(); i++) {
-
-        //Object value = list1.get(i);
 
         if (value != null) {
-        //String userName = value.toString();
 
         // Get requestId using userName
         String requestId = userNameToRequestId.get(value);
@@ -680,7 +678,6 @@ If you have any questions regarding the results, please contact the MEA team.
         contents.append(value);
         }
         }
-        //}
 
         contents.append("\n");
         }
@@ -688,26 +685,27 @@ If you have any questions regarding the results, please contact the MEA team.
         return contents.toString();
         }
 
-
-        List usersToBeDeactivated =
-        (List) workflow.get("usersToBeDeactivated");
-         
-        Map requestIdToUserName = (Map) workflow.get("requestIdToUserName");
-        
-        log.error("requestIdToUserName::::::"+requestIdToUserName);
-
         String recieipnts = "h1vh@xxx.com";
 
         boolean isEmailSent = false;
         Map argList = new HashMap();
-        argList.put("entitlementName","");
-        argList.put("entitlementValue","");
-        argList.put("applicationName","");
-        argList.put("recipientName",recieipnts);
-        argList.put("reason","");
+        // Populate email template arguments
+        argList.put("Requester",
+        requestedBy != null ? requestedBy : "Unknown");
+
+        argList.put("CertificationID",
+        certificationID != null ? certificationID : "N/A");
+
+        argList.put("ProcessedDate", processedDate);
+
+        argList.put("TotalUsers", String.valueOf(totalUsers));
+
+        argList.put("DisabledCount", String.valueOf(disabledCount));
+
+        argList.put("SkippedCount", String.valueOf(skippedCount));
 
         try{
-        EmailTemplate template = context.getObjectByName(EmailTemplate.class, "Access Request Reminder");
+        EmailTemplate template = context.getObjectByName(EmailTemplate.class, "Access Request Remin");
         log.error("template::::::"+template);
         log.error("usersToBeDeactivated::::::"+usersToBeDeactivated);
         if(null != template){
@@ -719,10 +717,16 @@ If you have any questions regarding the results, please contact the MEA team.
         ops.addAttachment(processedIdenAttachement);
         }
         context.sendEmailNotification(template, ops);
-        log.error("aftterSend notification::::::");
-        
-        }
         isEmailSent = true;
+
+        log.error("Email notification sent successfully.");
+        
+        } else {
+
+        log.error("Email template not found.");
+
+        }
+       
         }
         catch (Exception e) {
         log.error("Error Occurred while sending the mail:::::::::::::::::::::::::::::");
@@ -736,3 +740,66 @@ If you have any questions regarding the results, please contact the MEA team.
   </Step>
   <Step icon="Stop" name="Stop" posX="855" posY="20"/>
 </Workflow>
+
+
+
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE EmailTemplate PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<EmailTemplate name="" >
+  <Body>
+Hello Team,
+
+The user disablement request has been processed by the MEA team.
+
+Request Details:
+------------------------------
+Submitted By           : ${Requester}
+Firewall Certification ID : ${CertificationID}
+Processed Date         : ${ProcessedDate}
+
+Processing Summary:
+------------------------------
+Total Users Submitted                       : ${TotalUsers}
+Users Processed for Disable                 : ${DisabledCount}
+Users Already Disabled/Inactive (Skipped)   : ${SkippedCount}
+
+Please find the attached report containing the user-level processing
+details along with their Request IDs.
+
+Status Definitions:
+------------------------------
+Skipped - User account was already disabled or inactive; no action was required.
+
+If you have any questions regarding the results, please contact the MEA team.
+
+Regards,
+MEA Team
+  </Body>
+  <Description>
+    Email template used to notify the MEA team about user disablement
+    processing results.
+  </Description>
+  <Signature>
+    <Inputs>
+      <Argument name="Requester" type="string">
+        <Description>Name of the person who submitted the request.</Description>
+      </Argument>
+      <Argument name="CertificationID" type="string">
+        <Description>Firewall certification ID associated with the request.</Description>
+      </Argument>
+      <Argument name="ProcessedDate" type="string">
+        <Description>Date on which the request was processed.</Description>
+      </Argument>
+      <Argument name="TotalUsers" type="string">
+        <Description>Total number of users submitted for processing.</Description>
+      </Argument>
+      <Argument name="DisabledCount" type="string">
+        <Description>Number of users processed for disablement.</Description>
+      </Argument>
+      <Argument name="SkippedCount" type="string">
+        <Description>Number of users skipped because they were already disabled or inactive.</Description>
+      </Argument>
+    </Inputs>
+  </Signature>
+  <Subject>MEA User Disablement Request Status</Subject>
+</EmailTemplate>
