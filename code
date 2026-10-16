@@ -1,6 +1,31 @@
+Subject: MEA User Disablement Request status
+
+Hello Team,
+
+The user disablement request has been processed by the MEA team.
+
+Request Details:
+
+Submitted By: ${Requester}
+//Firewall Certification ID: ${CertificationID}
+Processed Date: ${ProcessedDate}
+Processing Summary:
+Total Users Submitted: ${TotalUsers}
+Users Processed for Disable: ${DisabledCount}
+Users Already Disabled/Inactive (Skipped): ${SkippedCount}
+
+Please find the attached report containing the user-level processing along with their Request IDs
+Click link to check the status of reuest: 
+
+Status Definitions
+
+Skipped – User account was already disabled; no action was required.
+
+If you have any questions regarding the results, please contact the MEA team.
+----------------------------------------------------------------------------------------------------
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE Workflow PUBLIC "sailpoint.dtd" "sailpoint.dtd">
-<Workflow created="1791942327453" explicitTransitions="true" id="c0a80004a1371d7081a13815fc9d0036" modified="1791997030017" name="Rest API - Workflow1" significantModified="1791997030017">
+<Workflow  explicitTransitions="true" name="xxx-Workflowflow-NPS-UDNAccountDisable">
   <Variable input="true" name="users"/>
   <Variable initializer="string:none" name="approvalScheme"/>
   <Variable name="requestedUsersCount"/>
@@ -209,6 +234,7 @@
         import java.util.Set;
         import java.util.HashSet;
 
+
         import org.apache.commons.logging.Log;
         import org.apache.commons.logging.LogFactory;
 
@@ -216,9 +242,13 @@
         LogFactory.getLog("Rest API Workflow");
 
         logger.info("Entered Validation Step for Rest API Users");
+        
+        log.error("Entered Validation Step for Rest API Users");
 
         // Read comma-separated users from workflow input
         String users = (String) workflow.get("users");
+        
+         log.error("users:::::::"+users);
 
         Set usersSet = new HashSet();
 
@@ -244,7 +274,7 @@
         String selectedApprovalScheme = "none";
 
         if (requestedUsersCount > 5) {
-        selectedApprovalScheme = "spadmin";
+        selectedApprovalScheme = "manager";
         }
 
         workflow.put("approvalScheme", selectedApprovalScheme);
@@ -256,7 +286,7 @@
         List invalidUsersList = new ArrayList();
 
         Application application =
-        context.getObjectByName(Application.class, "neymar");
+        context.getObjectByName(Application.class, "UDN");
 
         IdentityService idSvc = new IdentityService(context);
 
@@ -266,6 +296,8 @@
 
         Identity iden =
         context.getObjectByName(Identity.class, uid);
+        
+        log.error("iden::::::::"+iden);
 
         if (iden == null) {
         invalidUsersList.add(
@@ -309,7 +341,8 @@
         System.out.println("invalidUsersList::::::::::::::"+invalidUsersList);
         logger.info("Eligible users: " + validUsersList);
         logger.info("Ineligible users: " + invalidUsersList);
-
+        log.error("validUsersList::::::::::::::"+validUsersList);
+ log.error("invalidUsersList::::::::::::::"+invalidUsersList);
         workflow.put("usersToBeDeactivated", validUsersList);
         workflow.put("ineligibleUsers", invalidUsersList);
 
@@ -363,6 +396,9 @@
 
         import org.apache.commons.logging.Log;
         import org.apache.commons.logging.LogFactory;
+                import java.text.SimpleDateFormat;
+          import java.time.LocalDate;
+  import java.time.format.DateTimeFormatter;
 
         private static Log logger =
         LogFactory.getLog("Rest API Workflow");
@@ -371,6 +407,8 @@
 
         List usersToBeDeactivated =
         (List) workflow.get("usersToBeDeactivated");
+        
+        log.error("usersToBeDeactivated:::::::::::::::::::::::::::::::"+usersToBeDeactivated);
 
 
         List usersalreadyBeDeactivated =
@@ -392,7 +430,7 @@
         } else {
 
         Application application =
-        context.getObjectByName(Application.class, "neymar");
+        context.getObjectByName(Application.class, "UDN");
 
         if (application == null) {
         throw new Exception(
@@ -425,19 +463,22 @@
         for (Object linkObj : links) {
 
         Link link = (Link) linkObj;
-        Object empId =
-        link.getAttribute("Emp_id");
+        Object sAMAccountName = 
+        link.getAttribute("sAMAccountName");
 
         if (!link.isDisabled()
-        &amp;&amp; empId != null
+        &amp;&amp; sAMAccountName != null
         &amp;&amp; uid.equalsIgnoreCase(
-        String.valueOf(empId))) {
+        String.valueOf(sAMAccountName))) {
 
         matchingLink = link;
         break;
         }
         }
         }
+        
+
+        Date now = new Date();
 
         if (matchingLink == null) {
         logger.warn(
@@ -460,6 +501,11 @@
 
         accReq.setOperation(
         AccountRequest.Operation.Disable);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        String today = formatter.format(now);
+        String description = (matchingLink.getAttribute("description") != null ? matchingLink.getAttribute("description") : "") + ";Account Inactive. AutoDisable " + today;
+        accReq.add(new AttributeRequest("description", ProvisioningPlan.Operation.Set, description));
 
         List accountReqList = new ArrayList();
         accountReqList.add(accReq);
@@ -617,61 +663,69 @@
         userNameToRequestId.put(entry.getValue(), entry.getKey());
         }
 
-        for (List list1 : inputFile) {
-        for (int i = 0; i &lt; list1.size(); i++) {
+        for (String value : inputFile) {
+       // for (int i = 0; i &lt; list1.size(); i++) {
 
-        Object value = list1.get(i);
+        //Object value = list1.get(i);
 
         if (value != null) {
-        String userName = value.toString();
+        //String userName = value.toString();
 
         // Get requestId using userName
-        String requestId = userNameToRequestId.get(userName);
+        String requestId = userNameToRequestId.get(value);
 
         if (requestId != null) {
         contents.append(requestId);
         } else {
-        contents.append(userName);
+        contents.append(value);
         }
         }
-
-        if (i &lt; list1.size() - 1) {
-        contents.append(",");
-        }
-        }
+        //}
 
         contents.append("\n");
         }
-
+         log.error("contents:::::::"+contents);
         return contents.toString();
         }
 
 
         List usersToBeDeactivated =
         (List) workflow.get("usersToBeDeactivated");
+         
+        Map requestIdToUserName = (Map) workflow.get("requestIdToUserName");
+        
+        log.error("requestIdToUserName::::::"+requestIdToUserName);
 
-
-        String recieipnts = "";
+        String recieipnts = "h1vh@xxx.com";
 
         boolean isEmailSent = false;
         Map argList = new HashMap();
+        argList.put("entitlementName","");
+        argList.put("entitlementValue","");
+        argList.put("applicationName","");
+        argList.put("recipientName",recieipnts);
+        argList.put("reason","");
 
         try{
-        EmailTemplate template = context.getObjectByName(EmailTemplate.class, "");
+        EmailTemplate template = context.getObjectByName(EmailTemplate.class, "Access Request Reminder");
+        log.error("template::::::"+template);
+        log.error("usersToBeDeactivated::::::"+usersToBeDeactivated);
         if(null != template){
         EmailOptions ops = new EmailOptions(recieipnts, argList);
         if(usersToBeDeactivated != null &amp;&amp; !usersToBeDeactivated.isEmpty()){
-        String processedUsersAttchedFile = generateCsv(usersToBeDeactivated);
-        EmailFileAttachment processedIdenAttachement = new EmailFileAttachment("", EmailFileAttachment.MimeType.MIME_CSV,
+        String processedUsersAttchedFile = generateCsv(usersToBeDeactivated,requestIdToUserName);
+        EmailFileAttachment processedIdenAttachement = new EmailFileAttachment("abc.csv", EmailFileAttachment.MimeType.MIME_CSV,
         processedUsersAttchedFile.toString().getBytes());
         ops.addAttachment(processedIdenAttachement);
         }
         context.sendEmailNotification(template, ops);
+        log.error("aftterSend notification::::::");
+        
         }
         isEmailSent = true;
         }
         catch (Exception e) {
-        log.error("Error Occurred while sending the mail");
+        log.error("Error Occurred while sending the mail:::::::::::::::::::::::::::::");
         isEmailSent = false;
         e.printStackTrace();
         }
@@ -682,11 +736,3 @@
   </Step>
   <Step icon="Stop" name="Stop" posX="855" posY="20"/>
 </Workflow>
-
-
-http://localhost:8080/identityiq/rest/workflows/Rest%20API%20-%20Workflow1/launch
-{
-  "workflowArgs": {
-    "users": "837,9001,9002,9003,922,6006"
-  }
-}
